@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portofolio Akuntansi | Salva Eka Ramadhani</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS AOS (Animate On Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --bg-dark: #020610;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --text-main: #ffffff;
+            --text-dim: #b0b0b0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            color: var(--text-main);
+            background: var(--bg-dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* 3D Canvas Background */
+        #canvas-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        /* Header / Navigation */
+        .header {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 20px 8%;
+            background: rgba(2, 6, 16, 0.8);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mylogo {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
+
+        .mylogo span { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+
+        .navbar a {
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-left: 25px;
+            font-weight: 500;
+            font-size: 13px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .navbar a:hover { color: var(--primary); text-shadow: 0 0 8px var(--primary); }
+
+        /* Home Section */
+        .home {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 120px 10% 80px;
+            flex-wrap: wrap;
+        }
+
+        .content { max-width: 600px; z-index: 2; }
+        .content h3 { font-size: 18px; color: var(--primary); letter-spacing: 4px; margin-bottom: 10px; }
+        .content h1 { font-size: clamp(35px, 5vw, 60px); font-weight: 800; margin-bottom: 15px; }
+        .content p { color: var(--text-dim); font-size: 1.1rem; margin-bottom: 35px; }
+
+        .btn-contact {
+            padding: 14px 35px;
+            background: var(--primary);
+            color: #000;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+        }
+
+        .btn-contact:hover {
+            transform: translateY(-3px);
+            background: #fff;
+            box-shadow: 0 6px 20px rgba(0, 210, 255, 0.5);
+        }
+
+        /* Foto Profil HUD 3D */
+        .image-wrapper {
+            position: relative;
+            width: 380px;
+            height: 380px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--primary);
+            border-bottom: 2px solid var(--primary);
+            animation: spin 4s linear infinite;
+        }
+
+        .image-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            z-index: 2;
+        }
+
+        .image-container img { width: 100%; height: 100%; object-fit: cover; }
+
+        .scan-line {
+            position: absolute;
+            width: 100%; height: 4px;
+            background: var(--primary);
+            top: 0; z-index: 3;
+            box-shadow: 0 0 15px var(--primary);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Cards & Grid */
+        section { padding: 100px 10%; }
+        .section-title { text-align: center; font-size: 32px; margin-bottom: 50px; font-weight: 800; }
+        .section-title span { color: var(--primary); }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: 0.4s;
+            transform-style: preserve-3d;
+        }
+
+        .card:hover { border-color: var(--primary); }
+        .card h3 { color: var(--primary); margin-bottom: 15px; transform: translateZ(20px); }
+
+        /* Contact Section */
+        .contact-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .contact-item {
+            text-decoration: none;
+            color: var(--text-main);
+            background: var(--card-bg);
+            padding: 20px 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 250px;
+        }
+
+        .contact-item i { font-size: 24px; color: var(--primary); }
+        .contact-item:hover {
+            transform: translateY(-5px);
+            background: rgba(0, 210, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        @media (max-width: 992px) {
+            .home { flex-direction: column-reverse; text-align: center; }
+            .image-wrapper { width: 300px; height: 300px; margin-bottom: 50px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <header class="header">
+        <a href="#home" class="mylogo">Salva<span>Acc.</span></a>
+        <nav class="navbar">
+            <a href="#home">Home</a>
+            <a href="#about">Profil</a>
+            <a href="#skills">Keahlian</a>
+            <a href="#projects">Pengalaman</a>
+            <a href="#contact">Kontak</a>
+        </nav>
+    </header>
+
+    <section id="home" class="home">
+        <div class="content" data-aos="fade-right">
+            <h3>HELLO, I'M</h3>
+            <h1>Salva <span>Eka Ramadhani</span></h1>
+            <h2 style="font-size: 1.6rem; margin-bottom: 20px;">I am a <span class="typing"></span></h2>
+            <p>Seorang profesional Akuntansi yang berfokus pada audit finansial, strategi perpajakan, dan analisis data dengan standar akurasi tinggi.</p>
+            <a href="#contact" class="btn-contact">Hubungi Saya</a>
+        </div>
+
+        <div class="image-wrapper" data-aos="zoom-in">
+            <div class="loader-ring"></div>
+            <div class="image-container">
+                <div class="scan-line"></div>
+                <img src="salpa2.jpeg" alt="Salva Eka Ramadhani">
+            </div>
+        </div>
+    </section>
+
+    <section id="about" data-aos="fade-up">
+        <h2 class="section-title">Tentang <span>Saya</span></h2>
+        <p style="text-align: center; max-width: 800px; margin: 0 auto; color: var(--text-dim); font-size: 1.1rem;">
+           "Saya adalah seorang mahasiswa Akuntansi yang memiliki dedikasi tinggi terhadap integritas data dan akurasi finansial. Dengan pemahaman mendalam mengenai standar PSAK dan perpajakan Indonesia, saya berkomitmen untuk membantu organisasi dalam mengelola laporan keuangan yang transparan serta patuh terhadap regulasi. Saya percaya bahwa akuntansi bukan sekadar angka, melainkan alat strategis untuk pengambilan keputusan bisnis yang tepat."
+        </p>
+    </section>
+
+    <section id="skills">
+        <h2 class="section-title" data-aos="fade-down">Keahlian <span>Utama</span></h2>
+        <div class="grid-container">
+            <div class="card" data-tilt data-aos="flip-left">
+                <h3>📊 Audit & Finansial</h3>
+                <p>Penyusunan laporan laba rugi, neraca, dan pemeriksaan kepatuhan internal sesuai standar PSAK.</p>
+            </div>
+            <div class="card" data-tilt data-aos="flip-left" data-aos-delay="200">
+                <h3>⚖️ Manajemen Pajak</h3>
+                <p>Keahlian dalam perhitungan PPh, PPN, dan pelaporan rutin melalui sistem perpajakan e-Filing.</p>
+            </div>
+            <div class="card" data-tilt data-aos="flip-left" data-aos-delay="400">
+                <h3>💻 Accounting Softwares</h3>
+                <p>Penguasaan alat profesional seperti SAP, Accurate, MYOB, dan Advance MS Excel (Macro/VBA).</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" data-aos="zoom-in">
+        <h2 class="section-title">Mari <span>Berkolaborasi</span></h2>
+        <div class="contact-container">
+            <!-- WhatsApp -->
+            <a href="https://wa.me/62895332175988" target="_blank" class="contact-item">
+                <i class="fab fa-whatsapp"></i>
+                <div>
+                    <p style="font-size: 0.7rem; color: var(--text-dim); margin: 0;">WhatsApp</p>
+                    <span>+62 895-3321-75988</span>
+                </div>
+            </a>
+
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/salvaaaa___?igsh=MWk5ZGI2cThkOHRxag==" target="_blank" class="contact-item">
+                <i class="fab fa-instagram"></i>
+                <div>
+                    <p style="font-size: 0.7rem; color: var(--text-dim); margin: 0;">Instagram</p>
+                    <span>@salvaeka_</span>
+                </div>
+            </a>
+
+            <!-- Email -->
+            <a href="mailto:salvaaaacsc@gmail.com" class="contact-item">
+                <i class="far fa-envelope"></i>
+                <div>
+                    <p style="font-size: 0.7rem; color: var(--text-dim); margin: 0;">Email</p>
+                    <span>salvaaaacsc@gmail.com</span>
+                </div>
+            </a>
+        </div>
+        
+        <div style="margin-top: 100px; text-align: center; font-size: 0.8rem; color: var(--text-dim);">
+            &copy; 2026 Salva Eka Ramadhani. Accounting Excellence.
+        </div>
+    </section>
+
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        new Typed(".typing", {
+            strings: ["Accounting Student", "Financial Analyst", "Tax Specialist", "Internal Auditor"],
+            typeSpeed: 100,
+            backSpeed: 60,
+            loop: true
+        });
+
+        VanillaTilt.init(document.querySelectorAll(".card"), {
+            max: 15,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.1
+        });
+
+        // Three.js Background
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        const geometry = new THREE.BufferGeometry();
+        const vertices = [];
+        for (let i = 0; i < 1000; i++) {
+            vertices.push(THREE.MathUtils.randFloatSpread(10), THREE.MathUtils.randFloatSpread(10), THREE.MathUtils.randFloatSpread(10));
+        }
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        const material = new THREE.PointsMaterial({ color: 0x00d2ff, size: 0.02 });
+        const points = new THREE.Points(geometry, material);
+        scene.add(points);
+
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            points.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
